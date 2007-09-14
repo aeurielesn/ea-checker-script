@@ -1,3 +1,12 @@
-[13-9-2007]
-	- Se agrega menu de GMs para resetear el evento encaso de cualquier problema.
-	
+/********************************************************************
+**
+**                           Changelog
+**
+*********************************************************************/
+
+[14-09-2007]
+- Separadas las funciones en un archivo independiente 'functions.txt'
+- Renombrado archivo 'checker.txt' a 'pieces.txt'
+
+[13-09-2007]
+- Se agrega menu de GMs para resetear el evento encaso de cualquier problema.

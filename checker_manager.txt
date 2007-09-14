@@ -1,0 +1,182 @@
+
+
+prueba1,5,3,4	script	Checker Manager	47,{
+
+	set $Opponent$, strcharinfo(0);
+	
+	if(.@CMO) goto L_Occuped;  	// Si el npc está ocupado con un char, nos dice que esperemos.
+	set .@CMO, 1;			//El npc se pone el cartel de "ocupado".
+
+	if($CheckReg == 1) goto L_RegOpponent;	//Comienzo del registro del segundo jugador.
+	initnpctimer;
+	announce "El npc está ocupado",8;
+
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Hola, soy el responsble del tablero de damas.";
+	mes "Me encargado de controlar que se cumplen las normas durante el juego, de asignar los jugadores que van a participar y de todo lo relacionado con este juego.";
+	next;
+	if(!$CheckGame) {
+		mes "^7E0000[Checker Manager]^000000";
+		mes "¿Deseas comenzar una partida?";
+//		set .@choose, select("- Sí, ¡jugemos un rato!.","- No, mejor en otro momento.");
+		switch(select("- Sí, ¡jugemos un rato!.","- No, mejor en otro momento.")){
+			case 1:
+				set $CheckGame, 1;
+				next;
+				goto L_StartRegister;
+			case 2:
+				mes "Como quieras, vuelve cuando te animes.";
+				set .@CMO, 0;
+				close;
+		}
+	}
+	else if($CheckGame){
+		mes "^7E0000[Checker Manager]^000000";
+		mes "En estos momentos hay una";
+		mes "partida en curso, intentaló";
+		mes "más tarde.";
+		set .@CMO, 0;
+		close;
+	}
+	close;
+
+L_StartRegister:
+
+	set .@Reg, 0;
+	set $Opponent$, "";
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Ok, juegemos entonces.";
+	mes "Para comenzar, tienes que elegir contrincante.";
+	mes "Introduce el nombre de tu oponente:";
+	next;
+	L_InOpponent:
+		if(.@CmOk == 1) {
+			mes "^7E0000[Checker Manager]^000000";
+			mes "Vuelve a introducir el nombre de tu oponente.";
+			next;
+		}		
+	input @opponet$;
+	mes "^7E0000[Checker Manager]^000000";
+	mes "El nombre de tu oponente es: ^000077"+.@opponet$+"^000000";
+	mes "¿Es correcto?";
+	next;
+//	set .@choose, select("- Sí, es correcto.","-No, me equivoqué.");
+	switch(select("- Sí, es correcto.","-No, me equivoqué.")){
+		case 1:
+			set $CheckReg, 1;
+			set $Opponent$, @opponet$;			
+			break;
+		case 2:
+			set .@CmOk, 1;
+			goto L_InOpponent;
+	}
+
+	set $WPlayer, 0;
+	set $BPlayer, 0;
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Correcto, continuemos entonces.";
+	mes "¿Con que color de fichas deseas jugar?";
+	next;
+	set .@choose, select("- Blancas ^007700[Porings]^000000","- Negras ^007700[Marins]^000000");
+	switch(.@choose){
+		case 1:
+			set $WPlayer, getcharid(0);
+			break;
+		case 2:
+			set $BPlayer, getcharid(0);
+			break;
+	}
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Estupendo, ya puedes decir a tu oponente que se registre.";
+	mes "Una vez se haya registrado podrá comenzar la partida.";
+	set .@CMO, 0;
+	close;
+
+L_RegOpponent:
+
+	if(strcharinfo(0) == $Opponent$) {
+		mes "^7E0000[Checker Manager]^0";
+		if($WPlayer) {
+			mes "Hola ^007700"+strcharinfo(0)+"^000000, tu oponente ha escogido las fichas blancas, tú juegas con las negras.";
+			set $BPlayer, getcharid(0);
+		}
+		else if($@BPlayer) {
+			mes "Hola ^007700"+strcharinfo(0)+"^000000, tu oponente ha escogido las fichas negras, tú juegas con las blancas.";
+			set $WPlayer, getcharid(0);
+		}
+		mes "Podemos comenzar la partida.";
+		set $CheckGame, 1;
+		set .@CMO, 0;
+		set $Opponent$, "";
+	//	callfunc("F_StartGame");
+		close;
+	}
+	else mes $Opponent$;
+	close;
+	
+
+	
+
+L_Occuped:
+
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Lo siento pero en este momento estoy ocupado, vuelve más tarde.";
+	close;
+
+OnTimer300000:	// 5 minutos de tiempo para el registro del segundo jugador
+	
+	announce "Pasó el tiempo máximo para el registro del segundo jugador, el tablero queda libre.",8;
+	stopnpctimer;
+	setnpctimer 0;
+	set .@CMO, 0;
+	set $WPlayer, 0;
+	set $BPlayer, 0;
+	set $Opponent$, "";
+	end;
+
+OnTimer900000:		// 15 minutos margen de seguridad para que se desbloqué el npc en caso de no terminar el registro.
+	
+	announce "Pasó el tiempo máximo para registrarse, el tablero quedá libre.",8;
+	stopnpctimer;
+	setnpctimer 0;
+	set .@CMO, 0;
+	set $WPlayer, 0;
+	set $BPlayer, 0;
+	set $Opponent$, "";
+	end;
+
+OnInit:
+	disablenpc "Poring#1";
+	disablenpc "Poring#2";
+	disablenpc "Poring#3";
+	disablenpc "Poring#4";
+	disablenpc "Poring#5";
+	disablenpc "Poring#6";
+	disablenpc "Poring#7";
+	disablenpc "Poring#8";
+	disablenpc "Poring#9";
+	disablenpc "Poring#10";
+	disablenpc "Poring#11";
+	disablenpc "Poring#12";
+	disablenpc "Poring#13";
+	disablenpc "Poring#14";
+	disablenpc "Poring#15";
+	disablenpc "Poring#16";
+	disablenpc "Poring#17";
+	disablenpc "Poring#18";
+	disablenpc "Poring#19";
+	disablenpc "Poring#20";
+	disablenpc "Poring#21";
+	disablenpc "Poring#22";
+	disablenpc "Poring#23";
+	disablenpc "Poring#24";
+	end;
+
+}
+
+function	script	F_StartGame	{
+
+	enablenpc "Poring#1";
+	end;
+
+}

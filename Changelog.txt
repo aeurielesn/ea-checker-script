@@ -1,0 +1,3 @@
+[13-9-2007]
+	- Se agrega menu de GMs para resetear el evento encaso de cualquier problema.
+	

@@ -1,0 +1,339 @@
+//===== eAthena Script =======================================
+//= Checker Game
+//===== By: ==================================================
+//= Xyphen
+//= pakpil
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= eAthena SVN 11900+
+//===== Description: =========================================
+//= Amusing Checker Game
+//===== Additional Comments: =================================
+//= This one is the game manager. This will start the game,
+//= player registration and game control.
+//============================================================ 
+
+prueba1,5,3,4	script	Checker Manager	47,{
+
+	function StartGame;
+	if(getgmlevel() >= 80 ) goto L_GMMenu;
+
+L_Start:	
+	if($@CMO) goto L_Occuped;  	// Si el npc está ocupado con un char, nos dice que esperemos.
+	set $@CMO, 1;			//El npc se pone el cartel de "ocupado".
+
+	if($@CheckReg == 1) goto L_RegOpponent;	//Comienzo del registro del segundo jugador.
+	if($@CheckGame == 1) goto L_Playing;
+	initnpctimer;
+
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Hola, soy el responsble del tablero de damas.";
+	mes "Me encargado de controlar que se cumplen las normas durante el juego, de asignar los jugadores que van a participar y de todo lo relacionado con este juego.";
+	next;
+	if(!$@CheckGame) {
+		mes "^7E0000[Checker Manager]^000000";
+		mes "¿Deseas comenzar una partida?";
+		switch(select("- Sí, ¡jugemos un rato!.","- No, mejor en otro momento.")){
+			case 1:
+				set $@CheckGame, 1;
+				goto L_StartRegister;
+			case 2:
+				mes "Como quieras, vuelve cuando te animes.";
+				set $@CMO, 0;
+				close;
+		}
+	}
+	else if($@CheckGame){
+		mes "^7E0000[Checker Manager]^000000";
+		mes "En estos momentos hay una";
+		mes "partida en curso, intentaló";
+		mes "más tarde.";
+		set $@CMO, 0;
+		close;
+	}
+	close;
+
+L_StartRegister:
+
+	set $@CheckReg, 0;
+	set $@Opponent$, "";
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Ok, juegemos entonces.";
+	mes "Para comenzar, tienes que elegir contrincante.";
+	mes "Introduce el nombre de tu oponente:";
+	next;
+
+L_InOpponent:
+	if(.@CmOk == 1) {
+		mes "^7E0000[Checker Manager]^000000";
+		mes "Vuelve a introducir el nombre de tu oponente.";
+		next;
+	}		
+	input @opponet$;
+	mes "^7E0000[Checker Manager]^000000";
+	mes "El nombre de tu oponente es: ^000077"+@opponet$+"^000000";
+	mes "¿Es correcto?";
+	next;
+	switch(select("- Sí, es correcto.","-No, me equivoqué.")){
+		case 1:
+			set $@CheckReg, 1;
+			set $@Opponent$, @opponet$;			
+			break;
+		case 2:
+			set .@CmOk, 1;
+			goto L_InOpponent;
+	}
+
+	set $@WPlayer, 0;
+	set $@BPlayer, 0;
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Correcto, continuemos entonces.";
+	mes "¿Con que color de fichas deseas jugar?";
+	next;
+	switch(select("- Blancas ^007700[Porings]^000000","- Negras ^007700[Marins]^000000")){
+		case 1:
+			set $@WPlayer, getcharid(0);
+			break;
+		case 2:
+			set $@BPlayer, getcharid(0);
+			break;
+	}
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Estupendo, ya puedes decir a tu oponente que se registre.";
+	mes "Una vez se haya registrado podrá comenzar la partida.";
+	set $@CMO, 0;
+	close;
+
+L_RegOpponent:
+
+	if(strcharinfo(0) == $@Opponent$) {
+		mes "^7E0000[Checker Manager]^0";
+		if($@WPlayer) {
+			mes "Hola ^007700"+strcharinfo(0)+"^000000, tu oponente ha escogido las fichas blancas, tú juegas con las negras.";
+			set $@BPlayer, getcharid(0);
+		}
+		else if($@BPlayer) {
+			mes "Hola ^007700"+strcharinfo(0)+"^000000, tu oponente ha escogido las fichas negras, tú juegas con las blancas.";
+			set $@WPlayer, getcharid(0);
+		}
+		mes "Podeis comenzar la partida.";
+		set $@CheckGame, 1;
+		set $@CheckReg, 2;
+		set $@CMO, 0;
+		set $@Opponent$, "";
+		StartGame();
+		set $@CheckTurn, 1;
+		stopnpctimer;
+		setnpctimer 0;
+		close;
+	}
+	else mes "No funca" + $@Opponent$;
+		
+	close;
+	
+
+	
+
+L_Occuped:
+
+	mes "^7E0000[Checker Manager]^000000";
+	mes "Lo siento pero en este momento estoy ocupado, vuelve más tarde.";
+	close;
+
+L_Playing:
+	mes "^7E0000[Checker Manager]^000000";
+	mes "En este momento hay una partida en juego, vuelve más tarde.";
+	close;
+
+OnTimer300000:	// 5 minutos de tiempo para el registro del segundo jugador
+	
+	if($@CheckReg < 1) {
+		
+		announce "Pasó el tiempo máximo para el registro del segundo jugador, el tablero queda libre.",8;
+		stopnpctimer;
+		setnpctimer 0;
+		set $@CMO, 0;
+		set $@WPlayer, 0;
+		set $@BPlayer, 0;
+		set $@Opponent$, "";
+		end;
+	}
+	end;
+
+OnTimer120000:		// 2 minutos margen de seguridad para que se desbloqué el npc en caso de no terminar el registro.
+	
+		announce "Pasó el tiempo máximo para registrarse, el tablero quedá libre.",8;
+		stopnpctimer;
+		setnpctimer 0;
+		set $@CMO, 0;
+		set $@WPlayer, 0;
+		set $@BPlayer, 0;
+		set $@Opponent$, "";
+		end;
+
+L_GMMenu:
+
+
+	mes "^7E0000[Checker Manager]^000000";
+	mes "¿Que deseas jugar o resetear el evento?";
+	next;
+	switch(select("- Quiero jugar una partida.","- Quiero resetear el evento.","- Cancelar")){
+		case 1:
+			mes "^7E0000[Checker Manager]^000000";
+			mes "Estupendo, diviertete.";
+			next;
+			goto L_Start;
+		case 2:
+
+			mes "^7E0000[Checker Manager]^000000";
+			mes "¿Seguro que quieres resetear el script?";
+			if ($@CheckGame) mes "Te aviso de que hay una partida en juego en estos momentos.";
+			next;
+			switch(select("Sí, resetea el evento.","No, mejor dejalo como está.")){
+				case 1:
+			
+					mes "^7E0000[Checker Manager]^000000";
+					mes "Bien, reseteando...";
+					next;
+					set $@WPlayer, 0;
+					set $@BPlayer, 0;
+					set $@Opponent, "";
+					set $@CheckGame, 0;
+					set $@CheckReg, 0;
+					set $@CheckTurn, 0;
+				
+					mes "^7E0000[Checker Manager]^000000";
+					mes "Ok, ya está todo reseteado, listo para ser utilizado de nuevo.";
+					close;
+				case 2:
+					mes "^7E0000[Checker Manager]^000000";
+					mes "OK, dejemoslo tal cual.";
+					close;
+			}
+		case 3:
+			goto L_Close;
+		
+	}
+
+	function StartGame {
+
+		setarray $@xPoring[1],0,2,4,6,1,3,5,7,0,2,4,6,7,5,3,1,6,4,2,0,7,5,3,1;
+		setarray $@yPoring[1],0,0,0,0,1,1,1,1,2,2,2,2,7,7,7,7,6,6,6,6,5,5,5,5;
+	
+		for( set .@i, 0; .@i < 64; set .@i, .@i + 1 ) set $@matriz[.@i], 0;
+		for( set .@i, 1; .@i < 15; set .@i, .@i + 1 ) disablenpc "Poporing#" + .@i;
+		for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ) disablenpc "Angeling#" + .@i;
+		for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ) set $@matriz[callfunc("F_MatrizPos",$@xPoring[.@i],$@yPoring[.@i])], .@i;
+		set $@xAngeling[1],3;
+		set $@yAngeling[1],3;
+		set $@nGhost,0;
+		set $@move,0;
+		set $@superdama,0;
+		set $@eat,0;	
+
+		enablenpc "Poring#1";
+		enablenpc "Poring#2";
+		enablenpc "Poring#3";
+		enablenpc "Poring#4";
+		enablenpc "Poring#5";
+		enablenpc "Poring#6";
+		enablenpc "Poring#7";
+		enablenpc "Poring#8";
+		enablenpc "Poring#9";
+		enablenpc "Poring#10";
+		enablenpc "Poring#11";
+		enablenpc "Poring#12";
+		enablenpc "Poring#13";
+		enablenpc "Poring#14";
+		enablenpc "Poring#15";
+		enablenpc "Poring#16";
+		enablenpc "Poring#17";
+		enablenpc "Poring#18";
+		enablenpc "Poring#19";
+		enablenpc "Poring#20";
+		enablenpc "Poring#21";
+		enablenpc "Poring#22";
+		enablenpc "Poring#23";
+		enablenpc "Poring#24";
+		return;
+		end;	
+
+	}
+
+}
+
+-	script	Checker_init	-1,{
+
+OnInit:
+
+	set $@WPlayer, 0;
+	set $@BPlayer, 0;
+	set $@Opponent$, "";
+	set $@CheckReg, 0;
+	set $@CheckGame, 0;
+	set $@CheckTurn, 0;
+	disablenpc "Poring#1";
+	disablenpc "Poring#2";
+	disablenpc "Poring#3";
+	disablenpc "Poring#4";
+	disablenpc "Poring#5";
+	disablenpc "Poring#6";
+	disablenpc "Poring#7";
+	disablenpc "Poring#8";
+	disablenpc "Poring#9";
+	disablenpc "Poring#10";
+	disablenpc "Poring#11";
+	disablenpc "Poring#12";
+	disablenpc "Poring#13";
+	disablenpc "Poring#14";
+	disablenpc "Poring#15";
+	disablenpc "Poring#16";
+	disablenpc "Poring#17";
+	disablenpc "Poring#18";
+	disablenpc "Poring#19";
+	disablenpc "Poring#20";
+	disablenpc "Poring#21";
+	disablenpc "Poring#22";
+	disablenpc "Poring#23";
+	disablenpc "Poring#24";
+	disablenpc "Angeling#1";
+	disablenpc "Angeling#2";
+	disablenpc "Angeling#3";
+	disablenpc "Angeling#4";
+	disablenpc "Angeling#5";
+	disablenpc "Angeling#6";
+	disablenpc "Angeling#7";
+	disablenpc "Angeling#8";
+	disablenpc "Angeling#9";
+	disablenpc "Angeling#10";
+	disablenpc "Angeling#11";
+	disablenpc "Angeling#12";
+	disablenpc "Angeling#13";
+	disablenpc "Angeling#14";
+	disablenpc "Angeling#15";
+	disablenpc "Angeling#16";
+	disablenpc "Angeling#17";
+	disablenpc "Angeling#18";
+	disablenpc "Angeling#19";
+	disablenpc "Angeling#20";
+	disablenpc "Angeling#21";
+	disablenpc "Angeling#22";
+	disablenpc "Angeling#23";
+	disablenpc "Angeling#24";
+	disablenpc "Poporing#1";
+	disablenpc "Poporing#2";
+	disablenpc "Poporing#3";
+	disablenpc "Poporing#4";
+	disablenpc "Poporing#5";
+	disablenpc "Poporing#6";
+	disablenpc "Poporing#7";
+	disablenpc "Poporing#8";
+	disablenpc "Poporing#9";
+	disablenpc "Poporing#10";
+	disablenpc "Poporing#11";
+	disablenpc "Poporing#12";
+	disablenpc "Poporing#13";
+	disablenpc "Poporing#14";
+	end;
+}

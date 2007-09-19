@@ -1,8 +1,26 @@
-/********************************************************************
-**
-**                           Changelog
-**
-*********************************************************************/
+//============================================================
+//= Changelog
+//============================================================
+
+[17-09-2007]
+- Corregido bug de movimiento para damas.
+- Optimizada funcion 'F_CheckTurn'
+- Agregada variables para contabilizar fichas restantes.
+
+[16-09-2007]
+- Modificado el modo de manejo de la array '$@matriz'
+- Eliminadas arrays '$@xAngeling' y '$@yAngeling'
+- Agregada funcion 'F_PieceType'
+- Agregada funcion 'F_ChangeType'
+- Corregido el control de turnos en funcion 'F_CheckTurn'.
+- Modificada funcion 'F_Player'
+- Modificada funcion 'F_TakePiece'
+- Modificada funcion 'F_MatrizChecker'
+- Modificada funcion 'F_MoveChecker2'
+- Modificada funcion 'F_GhostUnloader'
+
+[15-09-2007]
+- Agregado control de turnos.
 
 [14-09-2007]
 - Separadas las funciones en un archivo independiente 'functions.txt'

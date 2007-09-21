@@ -6,6 +6,8 @@
 - Corregido bug de movimiento para damas.
 - Optimizada funcion 'F_CheckTurn'
 - Agregada variables para contabilizar fichas restantes.
+- Corregidos los nombres de variables, para mejor entendimiento
+  del codigo.
 
 [16-09-2007]
 - Modificado el modo de manejo de la array '$@matriz'
@@ -27,4 +29,5 @@
 - Renombrado archivo 'checker.txt' a 'pieces.txt'
 
 [13-09-2007]
-- Se agrega menu de GMs para resetear el evento encaso de cualquier problema.
+- Se agrega menu de GMs para resetear el evento encaso de
+  cualquier problema.

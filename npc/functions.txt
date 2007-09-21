@@ -95,8 +95,6 @@ function	script	F_ChangeType	{
 	return;
 	}
 
-
-
 function	script	F_GhostUnloader	{
 	if(select("Mover","No mover")==1){
 		getmapxy( .@map$, .@lastx, .@lasty, 1 ,"Poporing#"+getarg(0));

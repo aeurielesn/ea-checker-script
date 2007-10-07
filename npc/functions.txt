@@ -146,6 +146,8 @@ function	script	F_GhostUnloader	{
 			}
 		close;
 		}
+	else close;
+
 	return;
 	}
 
@@ -199,6 +201,8 @@ function	script	F_MoveChecker	{
 		if(.@posible&8) { callfunc "F_GhostLoader",.@x+2,.@y+(2*getarg(1)); set $@TakePiece,1; }
 		if(!getarg(2)) close;
 		}
+	else close;
+	
 		
 	return;
 	}
@@ -273,6 +277,8 @@ function	script	F_MoveChecker2	{
 
 		if(!getarg(1)) close;
 		}
+	else close;
+
 	return;
 	}
 

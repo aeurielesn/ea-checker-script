@@ -2,6 +2,9 @@
 //= Changelog
 //============================================================
 
+[06-10-2007]
+- Corregido bug de movimiento de fichas con la opcion "No Mover"
+
 [17-09-2007]
 - Corregido bug de movimiento para damas.
 - Optimizada funcion 'F_CheckTurn'

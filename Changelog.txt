@@ -2,6 +2,14 @@
 //= Changelog
 //============================================================
 
+[24-06-2008]
+- Agregada función para comprobar fin del juego.
+	- El oponente no puede mover ninguna ficha.
+	- El jugador come todas las piezas del oponente.
+- Agregada comprobación de coronación de peones.
+- Correcciones de bugs varios detectados durante 
+  la inspección del código.
+
 [06-10-2007]
 - Corregido bug de movimiento de fichas con la opcion "No Mover"
 
@@ -32,5 +40,5 @@
 - Renombrado archivo 'checker.txt' a 'pieces.txt'
 
 [13-09-2007]
-- Se agrega menu de GMs para resetear el evento encaso de
+- Se agrega menu de GMs para resetear el evento en caso de
   cualquier problema.

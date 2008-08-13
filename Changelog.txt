@@ -1,6 +1,8 @@
 //============================================================
 //= Changelog
 //============================================================
+[13-08-2008]
+- Agregados los archivos del mapa del tablero.
 
 [24-06-2008]
 - Agregada función para comprobar fin del juego.

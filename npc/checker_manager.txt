@@ -14,7 +14,7 @@
 //= player registration and game control.
 //============================================================ 
 
-prueba1,5,3,4	script	Checker Manager	47,{
+prueba1,5,3,4	script	Checker Manager#ck_game	47,{
 
 	function StartGame;
 	if(getgmlevel() >= 80 ) goto L_GMMenu;
@@ -23,34 +23,50 @@ L_Start:
 	if($@CMO) goto L_Occuped;  	// Si el npc está ocupado con un char, nos dice que esperemos.
 	set $@CMO, 1;			//El npc se pone el cartel de "ocupado".
 
-	if($@CheckReg == 1) goto L_RegOpponent;	//Comienzo del registro del segundo jugador.
+	if($@CheckReg == 1 && strcharinfo(0) == $@Opponent$) goto L_RegOpponent;	//Comienzo del registro del segundo jugador.
 	if($@CheckGame == 1) goto L_Playing;
-	initnpctimer;
+	initnpctimer "Checker Manager#ck_game";
 
 	mes "^7E0000[Checker Manager]^000000";
-	mes "Hola, soy el responsble del tablero de damas.";
-	mes "Me encargado de controlar que se cumplen las normas durante el juego, de asignar los jugadores que van a participar y de todo lo relacionado con este juego.";
+	mes "Hola, soy el responsble del ta";
+	mes "blero de damas.";
+	mes "Me encargado de controlar que";
+	mes "se cumplen las normas durante";
+	mes "el juego, de asignar los";
+	mes "jugadores que van a participar";
+	mes "y de todo lo relacionado con";
+	mes "este juego.";
 	next;
-	if(!$@CheckGame) {
-		mes "^7E0000[Checker Manager]^000000";
-		mes "¿Deseas comenzar una partida?";
-		switch(select("- Sí, ¡jugemos un rato!.","- No, mejor en otro momento.")){
-			case 1:
-				set $@CheckGame, 1;
-				goto L_StartRegister;
-			case 2:
-				mes "Como quieras, vuelve cuando te animes.";
-				set $@CMO, 0;
-				close;
-		}
-	}
-	else if($@CheckGame){
+	if($@CheckGame) {
 		mes "^7E0000[Checker Manager]^000000";
 		mes "En estos momentos hay una";
 		mes "partida en curso, intentaló";
 		mes "más tarde.";
 		set $@CMO, 0;
+		stopnpctimer "Checker Manager#ck_game";
 		close;
+	}
+	mes "^7E0000[Checker Manager]^000000";
+	mes "¿Deseas comenzar una partida?";
+	next;
+	switch(prompt("- Sí, ¡jugemos un rato!.:- No, mejor en otro momento.:- ¿Como jugar?")){
+		case 1:
+			set $@CheckGame, 1;
+			goto L_StartRegister;
+		case 2:
+			mes "Como quieras, vuelve cuando te animes.";
+			set $@CMO, 0;
+			stopnpctimer "Checker Manager#ck_game";
+			close;
+		case 3:
+			mes "Como jugar??";
+			set $@CMO, 0;
+			stopnpctimer "Checker Manager#ck_game";
+			close;
+		case 255:
+			stopnpctimer "Checker Manager#ck_game";
+			set $@CMO, 0;
+			end;
 	}
 	close;
 
@@ -65,7 +81,7 @@ L_StartRegister:
 	next;
 
 L_InOpponent:
-	if(.@CmOk == 1) {
+	if(@CmOk == 1) {
 		mes "^7E0000[Checker Manager]^000000";
 		mes "Vuelve a introducir el nombre de tu oponente.";
 		next;
@@ -75,14 +91,19 @@ L_InOpponent:
 	mes "El nombre de tu oponente es: ^000077"+@opponet$+"^000000";
 	mes "¿Es correcto?";
 	next;
-	switch(select("- Sí, es correcto.","-No, me equivoqué.")){
+	switch(prompt("- Sí, es correcto.","-No, me equivoqué.")){
 		case 1:
 			set $@CheckReg, 1;
-			set $@Opponent$, @opponet$;			
+			set $@Opponent$, @opponet$;
 			break;
 		case 2:
-			set .@CmOk, 1;
+			set @CmOk, 1;
 			goto L_InOpponent;
+
+		case 255:
+			stopnpctimer "Checker Manager#ck_game";
+			set $@CMO, 0;
+			end;
 	}
 
 	set $@WPlayer, 0;
@@ -91,18 +112,24 @@ L_InOpponent:
 	mes "Correcto, continuemos entonces.";
 	mes "¿Con que color de fichas deseas jugar?";
 	next;
-	switch(select("- Blancas ^007700[Porings]^000000","- Negras ^007700[Marins]^000000")){
+	switch(prompt("- Blancas ^007700[Porings]^000000","- Negras ^007700[Marins]^000000")){
 		case 1:
 			set $@WPlayer, getcharid(0);
 			break;
 		case 2:
 			set $@BPlayer, getcharid(0);
 			break;
+		case 255:
+			stopnpctimer "Checker Manager#ck_game";
+			set $@CMO, 0;
+			end;
 	}
 	mes "^7E0000[Checker Manager]^000000";
 	mes "Estupendo, ya puedes decir a tu oponente que se registre.";
 	mes "Una vez se haya registrado podrá comenzar la partida.";
 	set $@CMO, 0;
+	stopnpctimer "Checker Manager#ck_game";
+	donpcevent "#ck_game_reg_timer::OnStart";
 	close;
 
 L_RegOpponent:
@@ -126,11 +153,10 @@ L_RegOpponent:
 		set $@CheckTurn, 1;
 		stopnpctimer;
 		setnpctimer 0;
+		donpcevent "#ck_game_reg_timer::OnEnd";
 		close;
 	}
-	else mes "No funca " + $@Opponent$;
-		
-	close;
+	else goto L_Occuped;
 	
 
 	
@@ -145,21 +171,6 @@ L_Playing:
 	mes "^7E0000[Checker Manager]^000000";
 	mes "En este momento hay una partida en juego, vuelve más tarde.";
 	close;
-
-OnTimer300000:	// 5 minutos de tiempo para el registro del segundo jugador
-	
-	if($@CheckReg < 1) {
-		
-		announce "Pasó el tiempo máximo para el registro del segundo jugador, el tablero queda libre.",8;
-		stopnpctimer;
-		setnpctimer 0;
-		set $@CMO, 0;
-		set $@WPlayer, 0;
-		set $@BPlayer, 0;
-		set $@Opponent$, "";
-		end;
-	}
-	end;
 
 OnTimer120000:		// 2 minutos margen de seguridad para que se desbloqué el npc en caso de no terminar el registro.
 	
@@ -196,12 +207,7 @@ L_GMMenu:
 					mes "^7E0000[Checker Manager]^000000";
 					mes "Bien, reseteando...";
 					next;
-					set $@WPlayer, 0;
-					set $@BPlayer, 0;
-					set $@Opponent, "";
-					set $@CheckGame, 0;
-					set $@CheckReg, 0;
-					set $@CheckTurn, 0;
+					callfunc "F_ch_ResetGame";
 				
 					mes "^7E0000[Checker Manager]^000000";
 					mes "Ok, ya está todo reseteado, listo para ser utilizado de nuevo.";
@@ -212,8 +218,9 @@ L_GMMenu:
 					close;
 			}
 		case 3:
-			goto L_Close;
+			close;
 	}
+
 
 	function StartGame {
 		setarray $@xPiece[1],0,2,4,6,1,3,5,7,0,2,4,6,7,5,3,1,6,4,2,0,7,5,3,1;
@@ -223,6 +230,9 @@ L_GMMenu:
 		for( set .@i, 1; .@i < 15; set .@i, .@i + 1 ) disablenpc "Poporing#" + .@i;
 		for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ) disablenpc "Angeling#" + .@i;
 		for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ) set $@cboard[callfunc("F_BoardPos",$@xPiece[.@i],$@yPiece[.@i])], .@i;
+		for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ) set $@canMove[.@i], 1;
+		for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ) set $@canMove[.@i], 0;
+
 		setarray $@rPieces[1],12,12;
 		set $@nGhost,0;
 		set $@MovePiece,0;
@@ -246,4 +256,61 @@ OnInit:
 	for(set .@i,1; .@i < 15; set .@i, .@i + 1)
 		disablenpc "Poporing#" + .@i;
 	end;
+}
+
+-	script	#ck_game_reg_timer	-1,{
+end;
+
+OnStart:
+
+	initnpctimer "#ck_game_reg_timer";
+	announce "Comienza a contar el tiempo de registro del 2do jugador",bc_all;
+	end;
+
+OnTimer120000:
+
+	if($@CheckReg < 2) {
+		
+		announce "Pasó el tiempo máximo para el registro del segundo jugador, el tablero queda libre.",8;
+		stopnpctimer;
+		setnpctimer 0;
+		stopnpctimer "#ck_game_reg_timer";
+		callfunc "F_ch_ResetGame";
+		end;
+	}
+	end;
+
+OnEnd:
+
+	stopnpctimer "#ck_game_reg_timer";
+	end;
+
+}
+
+-	script	#ck_game_over	-1,{
+end;
+
+OnGameOver:
+	announce "comienza el OnGameOver",bc_all;
+	initnpctimer "#ck_game_over";
+	end;
+
+OnTimer1000:
+	mapannouce "prueba1","El juego ha finalizado",bc_map;
+	end;
+
+OnTimer5000:
+	mapannoouce "prueba1","El ganador ha sido: [Ganador] ~¡¡Enhorabuena!!~",bc_map;
+	callfunc "F_ch_ResetGame";
+	end;
+
+OnTimer15000:
+	mapannouce "prueba1","Es el momento de dejar libre el tablero, por favor, id saliendo.",bc_map;
+	end;
+
+OnTimer25000:
+	mapwarp "prueba1","prontera",150,150;
+	stopnpctimer "#ck_game_over";
+	end;
+
 }

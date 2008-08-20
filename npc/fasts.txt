@@ -1,0 +1,178 @@
+//*
+//cboard[0..63]
+//rPiece[1..2]
+//xPiece[0..24], yPiece[0..24]
+//CheckTurn
+//MovePiece
+//canMove[0..24]
+//*/
+
+//**
+//* Fast's Commons functions
+//* args - player, piece id, x-relative, y-relative, can-move
+//*/
+function	script	F_Set_Fast	{
+	set .@piece, getarg(1) + (12*(getarg(0)-1));
+	set $@xPiece[.@piece], getarg(2);
+	set $@yPiece[.@piece], getarg(3);
+	set $@cboard[ callfunc("F_BoardPos",getarg(2),getarg(3)) ], .@piece;
+	set $@canMove[.@piece], getarg(4);
+}
+
+//**
+//* Fast #1
+//*/
+function	script	F_Fast_One	{
+	set $@TakePiece, 0;
+	set $@CheckTurn, 1;
+	set $@MovePiece, 0;
+	set $@rPieces[1], 1;
+	set $@rPieces[2], 6;
+	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
+		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
+			set $@cboard[ callfunc("F_BoardPos",.@i,.@j) ], 0;
+		}
+	}
+	for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ){
+		disablenpc "Poring#" + .@i;
+		disablenpc "Angeling#" + .@i;
+		set $@canMove[.@i], 0;
+	}
+	callfunc "F_Set_Fast", 1, 1, 2, 1, 1;
+	callfunc "F_Set_Fast", 2, 1, 3, 2, 0;
+	callfunc "F_Set_Fast", 2, 2, 5, 4, 0;
+	callfunc "F_Set_Fast", 2, 3, 3, 4, 0;
+	callfunc "F_Set_Fast", 2, 4, 3, 6, 0;
+	callfunc "F_Set_Fast", 2, 5, 1, 5, 0;
+	callfunc "F_Set_Fast", 2, 6, 0, 7, 0;
+	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
+		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
+			set .@piece, $@cboard[ callfunc("F_BoardPos",.@i,.@j) ];
+			if ( .@piece > 0 ){
+				movenpc "Poring#" + .@piece, callfunc("F_AbsolutePos",.@i),callfunc("F_AbsolutePos",.@j);
+				enablenpc "Poring#" + .@piece;
+			}
+		}
+	}
+	return;
+}
+
+//**
+//* Fast #2
+//*/
+function	script	F_Fast_Two	{
+	set $@TakePiece, 0;
+	set $@CheckTurn, 2;
+	set $@MovePiece, 0;
+	set $@rPieces[1], 5;
+	set $@rPieces[2], 6;
+	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
+		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
+			set $@cboard[ callfunc("F_BoardPos",.@i,.@j) ], 0;
+		}
+	}
+	for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ){
+		disablenpc "Poring#" + .@i;
+		disablenpc "Angeling#" + .@i;
+		set $@canMove[.@i], 0;
+	}
+	callfunc "F_Set_Fast", 1, 1, 1, 0, 0;
+	callfunc "F_Set_Fast", 1, 2, 3, 0, 0;
+	callfunc "F_Set_Fast", 1, 3, 5, 0, 0;
+	callfunc "F_Set_Fast", 1, 4, 7, 0, 0;
+	callfunc "F_Set_Fast", 1, 5, 2, 1, 0;
+	callfunc "F_Set_Fast", 2, 1, 2, 3, 1;
+	callfunc "F_Set_Fast", 2, 2, 3, 4, 1;
+	callfunc "F_Set_Fast", 2, 3, 5, 4, 1;
+	callfunc "F_Set_Fast", 2, 4, 1, 6, 1;
+	callfunc "F_Set_Fast", 2, 5, 3, 6, 1;
+	callfunc "F_Set_Fast", 2, 6, 0, 7, 1;
+	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
+		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
+			set .@piece, $@cboard[ callfunc("F_BoardPos",.@i,.@j) ];
+			if ( .@piece > 0 ){
+				movenpc "Poring#" + .@piece, callfunc("F_AbsolutePos",.@i),callfunc("F_AbsolutePos",.@j);
+				enablenpc "Poring#" + .@piece;
+			}
+		}
+	}
+	return;
+}
+
+//**
+//* Fast #3
+//*/
+function	script	F_Fast_Three	{
+	set $@TakePiece, 0;
+	set $@CheckTurn, 1;
+	set $@MovePiece, 0;
+	set $@rPieces[1], 10;
+	set $@rPieces[2], 2;
+	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
+		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
+			set $@cboard[ callfunc("F_BoardPos",.@i,.@j) ], 0;
+		}
+	}
+	for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ){
+		disablenpc "Poring#" + .@i;
+		disablenpc "Angeling#" + .@i;
+		set $@canMove[.@i], 0;
+	}
+	callfunc "F_Set_Fast", 1, 1, 0, 1, 1;
+	callfunc "F_Set_Fast", 1, 2, 2, 1, 1;
+	callfunc "F_Set_Fast", 1, 3, 4, 1, 1;
+	callfunc "F_Set_Fast", 1, 4, 6, 1, 1;
+	callfunc "F_Set_Fast", 1, 5, 1, 2, 1;
+	callfunc "F_Set_Fast", 1, 6, 3, 2, 1;
+	callfunc "F_Set_Fast", 1, 7, 5, 2, 1;
+	callfunc "F_Set_Fast", 1, 8, 1, 4, 1;
+	callfunc "F_Set_Fast", 1, 9, 3, 4, 1;
+	callfunc "F_Set_Fast", 1, 10, 5, 4, 1;
+	callfunc "F_Set_Fast", 2, 1, 2, 3, 0;
+	callfunc "F_Set_Fast", 2, 2, 4, 3, 0;
+	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
+		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
+			set .@piece, $@cboard[ callfunc("F_BoardPos",.@i,.@j) ];
+			if ( .@piece > 0 ){
+				movenpc "Poring#" + .@piece, callfunc("F_AbsolutePos",.@i),callfunc("F_AbsolutePos",.@j);
+				enablenpc "Poring#" + .@piece;
+			}
+		}
+	}
+	return;
+}
+
+//**
+//* Fast #4
+//*/
+function	script	F_Fast_Four	{
+	set $@TakePiece, 0;
+	set $@CheckTurn, 1;
+	set $@MovePiece, 0;
+	set $@rPieces[1], 1;
+	set $@rPieces[2], 2;
+	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
+		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
+			set $@cboard[ callfunc("F_BoardPos",.@i,.@j) ], 0;
+		}
+	}
+	for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ){
+		disablenpc "Poring#" + .@i;
+		disablenpc "Angeling#" + .@i;
+		set $@canMove[.@i], 0;
+	}
+	callfunc "F_Set_Fast", 1, 1, 3, 2, 1;
+	callfunc "F_Set_Fast", 2, 1, 2, 3, 0;
+	callfunc "F_Set_Fast", 2, 2, 2, 5, 0;
+	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
+		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
+			set .@piece, $@cboard[ callfunc("F_BoardPos",.@i,.@j) ];
+			if ( .@piece > 0 ){
+				movenpc "Poring#" + .@piece, callfunc("F_AbsolutePos",.@i),callfunc("F_AbsolutePos",.@j);
+				enablenpc "Poring#" + .@piece;
+			}
+		}
+	}
+	return;
+}
+

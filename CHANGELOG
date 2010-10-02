@@ -1,13 +1,16 @@
 //============================================================
 //= Changelog
 //============================================================
+[2-10-2010]
+- Actualizado para funcionar con la revision 14410 de eAthena.
+- Reposicionamiento de las fichas en F_StartGame.
+
 [21-8-2008]
 - Agregada verificación de obligación de comer. En caso de que
   haya alguna/s pieza que tenga que comer, solo podrán moverse
   esa/s.
 - Agregado control de reseteo y corregido el control de tiempos
   de espera en el Checker Manager.
-
 
 [13-08-2008]
 - Agregados los archivos del mapa del tablero.

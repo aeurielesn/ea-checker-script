@@ -1,11 +1,57 @@
-//*
-//cboard[0..63]
-//rPiece[1..2]
-//xPiece[0..24], yPiece[0..24]
-//CheckTurn
-//MovePiece
-//canMove[0..24]
+//**
+//* cboard[0..63]
+//* rPiece[1..2]
+//* xPiece[0..24], yPiece[0..24]
+//* CheckTurn
+//* MovePiece
+//* canMove[0..24]
 //*/
+
+checker,7,10,4	script	DEBUG	858,{
+	set .@choose, select("Play alone", "Switch Turn");
+	switch(.@choose) {
+		case 1:
+			set $@WPlayer, getcharid(0);
+			set $@BPlayer, getcharid(0);
+			callfunc "F_StartGame";
+			break;
+		case 2:
+			set $@CheckTurn, 3 - $@CheckTurn;
+			break;
+	}
+	close;
+	end;
+}
+
+checker,7,18,4	script	FAST	858,{
+	set .@choose, 
+		select(
+			"1",
+			"2",
+			"3 End of Game",
+			"4",
+			"5"
+		);
+	switch(.@choose) {
+		case 1:
+			callfunc "F_Fast_One";
+			break;
+		case 2:
+			callfunc "F_Fast_Two";
+			break;
+		case 3:
+			callfunc "F_Fast_Three";
+			break;
+		case 4:
+			callfunc "F_Fast_Four";
+			break;
+		case 5:
+			callfunc "F_Fast_Five";
+			break;
+	}
+	close;
+	end;
+}
 
 //**
 //* Fast's Commons functions
@@ -17,17 +63,12 @@ function	script	F_Set_Fast	{
 	set $@yPiece[.@piece], getarg(3);
 	set $@cboard[ callfunc("F_BoardPos",getarg(2),getarg(3)) ], .@piece;
 	set $@canMove[.@piece], getarg(4);
+	return;
 }
 
-//**
-//* Fast #1
-//*/
-function	script	F_Fast_One	{
+function	script	F_Fast_WipeOut	{
 	set $@TakePiece, 0;
-	set $@CheckTurn, 1;
 	set $@MovePiece, 0;
-	set $@rPieces[1], 1;
-	set $@rPieces[2], 6;
 	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
 		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
 			set $@cboard[ callfunc("F_BoardPos",.@i,.@j) ], 0;
@@ -38,13 +79,10 @@ function	script	F_Fast_One	{
 		disablenpc "Angeling#" + .@i;
 		set $@canMove[.@i], 0;
 	}
-	callfunc "F_Set_Fast", 1, 1, 2, 1, 1;
-	callfunc "F_Set_Fast", 2, 1, 3, 2, 0;
-	callfunc "F_Set_Fast", 2, 2, 5, 4, 0;
-	callfunc "F_Set_Fast", 2, 3, 3, 4, 0;
-	callfunc "F_Set_Fast", 2, 4, 3, 6, 0;
-	callfunc "F_Set_Fast", 2, 5, 1, 5, 0;
-	callfunc "F_Set_Fast", 2, 6, 0, 7, 0;
+	return;
+}
+
+function	script	F_Fast_Load_Positions	{
 	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
 		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
 			set .@piece, $@cboard[ callfunc("F_BoardPos",.@i,.@j) ];
@@ -58,24 +96,32 @@ function	script	F_Fast_One	{
 }
 
 //**
+//* Fast #1
+//*/
+function	script	F_Fast_One	{
+	set $@CheckTurn, 1;
+	set $@rPieces[1], 1;
+	set $@rPieces[2], 6;
+	callfunc "F_Fast_WipeOut";
+	callfunc "F_Set_Fast", 1, 1, 2, 1, 1;
+	callfunc "F_Set_Fast", 2, 1, 3, 2, 0;
+	callfunc "F_Set_Fast", 2, 2, 5, 4, 0;
+	callfunc "F_Set_Fast", 2, 3, 3, 4, 0;
+	callfunc "F_Set_Fast", 2, 4, 3, 6, 0;
+	callfunc "F_Set_Fast", 2, 5, 1, 5, 0;
+	callfunc "F_Set_Fast", 2, 6, 0, 7, 0;
+	callfunc "F_Fast_Load_Positions";
+	return;
+}
+
+//**
 //* Fast #2
 //*/
 function	script	F_Fast_Two	{
-	set $@TakePiece, 0;
 	set $@CheckTurn, 2;
-	set $@MovePiece, 0;
 	set $@rPieces[1], 5;
 	set $@rPieces[2], 6;
-	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
-		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
-			set $@cboard[ callfunc("F_BoardPos",.@i,.@j) ], 0;
-		}
-	}
-	for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ){
-		disablenpc "Poring#" + .@i;
-		disablenpc "Angeling#" + .@i;
-		set $@canMove[.@i], 0;
-	}
+	callfunc "F_Fast_WipeOut";
 	callfunc "F_Set_Fast", 1, 1, 1, 0, 0;
 	callfunc "F_Set_Fast", 1, 2, 3, 0, 0;
 	callfunc "F_Set_Fast", 1, 3, 5, 0, 0;
@@ -87,15 +133,7 @@ function	script	F_Fast_Two	{
 	callfunc "F_Set_Fast", 2, 4, 1, 6, 1;
 	callfunc "F_Set_Fast", 2, 5, 3, 6, 1;
 	callfunc "F_Set_Fast", 2, 6, 0, 7, 1;
-	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
-		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
-			set .@piece, $@cboard[ callfunc("F_BoardPos",.@i,.@j) ];
-			if ( .@piece > 0 ){
-				movenpc "Poring#" + .@piece, callfunc("F_AbsolutePos",.@i),callfunc("F_AbsolutePos",.@j);
-				enablenpc "Poring#" + .@piece;
-			}
-		}
-	}
+	callfunc "F_Fast_Load_Positions";
 	return;
 }
 
@@ -103,21 +141,10 @@ function	script	F_Fast_Two	{
 //* Fast #3
 //*/
 function	script	F_Fast_Three	{
-	set $@TakePiece, 0;
 	set $@CheckTurn, 1;
-	set $@MovePiece, 0;
 	set $@rPieces[1], 10;
 	set $@rPieces[2], 2;
-	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
-		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
-			set $@cboard[ callfunc("F_BoardPos",.@i,.@j) ], 0;
-		}
-	}
-	for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ){
-		disablenpc "Poring#" + .@i;
-		disablenpc "Angeling#" + .@i;
-		set $@canMove[.@i], 0;
-	}
+	callfunc "F_Fast_WipeOut";
 	callfunc "F_Set_Fast", 1, 1, 0, 1, 1;
 	callfunc "F_Set_Fast", 1, 2, 2, 1, 1;
 	callfunc "F_Set_Fast", 1, 3, 4, 1, 1;
@@ -130,15 +157,7 @@ function	script	F_Fast_Three	{
 	callfunc "F_Set_Fast", 1, 10, 5, 4, 1;
 	callfunc "F_Set_Fast", 2, 1, 2, 3, 0;
 	callfunc "F_Set_Fast", 2, 2, 4, 3, 0;
-	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
-		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
-			set .@piece, $@cboard[ callfunc("F_BoardPos",.@i,.@j) ];
-			if ( .@piece > 0 ){
-				movenpc "Poring#" + .@piece, callfunc("F_AbsolutePos",.@i),callfunc("F_AbsolutePos",.@j);
-				enablenpc "Poring#" + .@piece;
-			}
-		}
-	}
+	callfunc "F_Fast_Load_Positions";
 	return;
 }
 
@@ -146,33 +165,36 @@ function	script	F_Fast_Three	{
 //* Fast #4
 //*/
 function	script	F_Fast_Four	{
-	set $@TakePiece, 0;
 	set $@CheckTurn, 1;
-	set $@MovePiece, 0;
 	set $@rPieces[1], 1;
 	set $@rPieces[2], 2;
-	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
-		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
-			set $@cboard[ callfunc("F_BoardPos",.@i,.@j) ], 0;
-		}
-	}
-	for( set .@i, 1; .@i < 25; set .@i, .@i + 1 ){
-		disablenpc "Poring#" + .@i;
-		disablenpc "Angeling#" + .@i;
-		set $@canMove[.@i], 0;
-	}
+	callfunc "F_Fast_WipeOut";
 	callfunc "F_Set_Fast", 1, 1, 3, 2, 1;
 	callfunc "F_Set_Fast", 2, 1, 2, 3, 0;
 	callfunc "F_Set_Fast", 2, 2, 2, 5, 0;
-	for( set .@i, 0; .@i < 8; set .@i, .@i + 1 ){
-		for( set .@j, 0; .@j < 8; set .@j, .@j + 1 ){
-			set .@piece, $@cboard[ callfunc("F_BoardPos",.@i,.@j) ];
-			if ( .@piece > 0 ){
-				movenpc "Poring#" + .@piece, callfunc("F_AbsolutePos",.@i),callfunc("F_AbsolutePos",.@j);
-				enablenpc "Poring#" + .@piece;
-			}
-		}
-	}
+	callfunc "F_Fast_Load_Positions";
 	return;
 }
 
+//**
+//* Fast #3
+//*/
+function	script	F_Fast_Five	{
+	set $@CheckTurn, 2;
+	set $@rPieces[1], 10;
+	set $@rPieces[2], 2;
+	callfunc "F_Fast_WipeOut";
+	callfunc "F_Set_Fast", 1, 1, 0, 1, 0;
+	callfunc "F_Set_Fast", 1, 2, 2, 1, 0;
+	callfunc "F_Set_Fast", 1, 3, 4, 1, 0;
+	callfunc "F_Set_Fast", 1, 4, 6, 1, 0;
+	callfunc "F_Set_Fast", 1, 5, 1, 2, 0;
+	callfunc "F_Set_Fast", 1, 6, 3, 2, 0;
+	callfunc "F_Set_Fast", 1, 7, 5, 2, 0;
+	callfunc "F_Set_Fast", 1, 8, 1, 4, 0;
+	callfunc "F_Set_Fast", 1, 9, 5, 4, 0;
+	callfunc "F_Set_Fast", 2, 1, 2, 3, 1;
+	callfunc "F_Set_Fast", 2, 2, 3, 4, 1;
+	callfunc "F_Fast_Load_Positions";
+	return;
+}

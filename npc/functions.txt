@@ -4,80 +4,88 @@
 //= Xyphen
 //= pakpil
 //===== Current Version: =====================================
-//= 4.0
+//= 5.0
 //===== Compatible With: =====================================
-//= eAthena SVN 10580+
+//= eAthena SVN 14410+
 //===== Description: =========================================
 //= Amusing Checker Game
 //===== Additional Comments: =================================
-//= These ones are the game control functions. These will
-//= control game procces, like pieces movements,
-//= Checker transfer, etc.
+//= Game control functions.
 //============================================================ 
 
 //**
 //* Process if exists obligatory moves.
 //*/
-//TODO: optimmize function
+//TODO: optimize
 function	script	F_ObligatoryMoves	{
    set .@obligatory, 0;
-	if($@CheckTurn==1){
-		for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ){
+	if($@CheckTurn==1) {
+		for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ) {
 			set .@posible, 0;
 			set .@piece, $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])];
-			set .@type, callfunc("F_PieceType",.@piece); 
-			if(.@type==1){
-            set .@posible, callfunc("F_Possibles",$@xPiece[.@i],$@yPiece[.@i],1,1);
-            if(.@posible&10){
-               set $@canMove[.@i], 0;
-               set .@obligatory, .@obligatory|1;
-               }
-            else set $@canMove[.@i], 1;
+			set .@type, callfunc("F_PieceType", .@piece); 
+			if(.@type == 1) {
+				set .@posible, callfunc("F_Possibles", $@xPiece[.@i], $@yPiece[.@i], 1, 1);
+				if(.@posible&10) {
+					set $@canMove[.@i], 0;
+					set .@obligatory, .@obligatory|1;
+				} else set $@canMove[.@i], 1;
+            } else if(.@type==2) {
+				set .@posible, callfunc("F_Possibles2", $@xPiece[.@i], $@yPiece[.@i],1);
+				if(.@posible&170) {
+					set $@canMove[.@i], 0;
+					set .@obligatory, .@obligatory|1;
+				} else set $@canMove[.@i], 1;
             }
-			else if(.@type==2){
-            set .@posible, callfunc("F_Possibles2",$@xPiece[.@i],$@yPiece[.@i],1);
-            if(.@posible&170){
-               set $@canMove[.@i], 0;
-               set .@obligatory, .@obligatory|1;
-               }
-            else set $@canMove[.@i], 1;
-            }
-			}
-		if(.@obligatory){
-		   for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ){
-            set $@canMove[.@i], 1 - $@canMove[.@i];
-            }
-         }
-	} else if($@CheckTurn==2){
-		for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ){
-			set .@posible, 0;
-			set .@piece, $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])];
-			set .@type, callfunc("F_PieceType",.@piece); 
-			if(.@type==1){
-            set .@posible, callfunc("F_Possibles",$@xPiece[.@i],$@yPiece[.@i],-1,2);
-            if(.@posible&10){
-               set $@canMove[.@i], 0;
-               set .@obligatory, .@obligatory|1;
-               }
-            else set $@canMove[.@i], 1;
-            }
-			else if(.@type==2){
-            set .@posible, callfunc("F_Possibles2",$@xPiece[.@i],$@yPiece[.@i],2);
-            if(.@posible&170){
-               set $@canMove[.@i], 0;
-               set .@obligatory, .@obligatory|1;
-               }
-            else set $@canMove[.@i], 1;
-            }
-			}
-		if(.@obligatory){
-		   for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ){
-            set $@canMove[.@i], 1 - $@canMove[.@i];
-            }
-         }
 		}
+		if(.@obligatory) {
+			for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ) {
+				set $@canMove[.@i], 1 - $@canMove[.@i];
+			}
+		}
+		for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ) {
+			set .@piece, $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])];
+			set .@type, callfunc("F_PieceType", .@piece);
+			if(.@type && $@canMove[.@i]) {
+				// FIXME: kings
+				if(.@type==1) donpcevent "Poring#" + .@i + "::OnEmote";
+			}
+		}
+	} else if($@CheckTurn==2) {
+		for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ) {
+			set .@posible, 0;
+			set .@piece, $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])];
+			set .@type, callfunc("F_PieceType", .@piece); 
+			if(.@type == 1) {
+				set .@posible, callfunc("F_Possibles", $@xPiece[.@i], $@yPiece[.@i], -1, 2);
+				if(.@posible&10) {
+					set $@canMove[.@i], 0;
+					set .@obligatory, .@obligatory|1;
+               } else set $@canMove[.@i], 1;
+            } else if(.@type==2) {
+				set .@posible, callfunc("F_Possibles2",$@xPiece[.@i],$@yPiece[.@i],2);
+				if(.@posible&170) {
+					set $@canMove[.@i], 0;
+					set .@obligatory, .@obligatory|1;
+				} else set $@canMove[.@i], 1;
+			}
+		}
+		if(.@obligatory) {
+			for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ) {
+				set $@canMove[.@i], 1 - $@canMove[.@i];
+			}
+		}
+		for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ) {
+			set .@piece, $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])];
+			set .@type, callfunc("F_PieceType", .@piece);
+			if(.@type && $@canMove[.@i]) {
+				// FIXME: kings
+				if(.@type==1) donpcevent "Poring#" + .@i + "::OnEmote";
+			}
+		}		
+	}
 	return .@obligatory;
-   }
+}
 
 ///**
 //* Checks the end of the game.
@@ -139,7 +147,7 @@ function	script	F_BoardPos	{
 ///**
 //* Retrieve the type of a specific piece.
 //* args - value of the piece
-//* return - 1 for a poring, 2 for and angeling, 0 otherwise.
+//* return - 1 for a man, 2 for a king, 0 otherwise.
 //*/
 function	script	F_PieceType	{
 	if((getarg(0)>=1) && (getarg(0)<=24)) return 1;
@@ -208,7 +216,8 @@ function	script	F_TakePiece	{
 
 	// TODO: Comprobacion de final de juego
 	// El jugador toma todas las fichas del oponente
-	if($@rPieces[callfunc("F_Player",.@todelp)]==0) dispbottom "Victoria del jugador actual.";
+	if($@rPieces[callfunc("F_Player",.@todelp)]==0)
+		dispbottom "Victoria del jugador actual.";
 	
 	return;
 	}
@@ -231,12 +240,14 @@ function	script	F_ChangeType	{
 //* args - piece id
 //*/
 function	script	F_GhostUnloader	{
-	if(select("Mover","No mover")==1){
+	if(select("Mover","No mover")==1) {
 		getmapxy( .@map$, .@lastx, .@lasty, 1 ,"Poporing#"+getarg(0));
 		for( set .@i, 1; .@i <= $@nGhost; set .@i, .@i + 1 ) disablenpc "Poporing#" + .@i;
 		set $@nGhost, 0;
 
-		if(callfunc("F_PieceType",$@MovePiece)==2) set .@piece, ($@MovePiece%25)+1;
+		set .@type, callfunc("F_PieceType", $@MovePiece);
+
+		if(.@type==2) set .@piece, ($@MovePiece%25)+1;
 		else set .@piece, $@MovePiece;
 
 		set .@pos, callfunc("F_BoardPos",$@xPiece[.@piece],$@yPiece[.@piece]);
@@ -250,76 +261,78 @@ function	script	F_GhostUnloader	{
 		set .@pos, callfunc("F_BoardPos",$@xPiece[.@piece],$@yPiece[.@piece]);
 		set $@cboard[.@pos], $@MovePiece;
 
-		if(callfunc("F_PieceType",$@MovePiece)==1) movenpc "Poring#" + .@piece, .@lastx, .@lasty;
+		if(.@type==1) movenpc "Poring#" + .@piece, .@lastx, .@lasty;
 		else movenpc "Angeling#" + .@piece, .@lastx, .@lasty;
 
 		// TODO: Comprobacion de coronar una ficha
-		if(callfunc("F_PieceType",$@MovePiece)==1){
+		if(.@type==1){
 			if((callfunc("F_Player",$@MovePiece)==2) && ($@yPiece[.@piece]==0)) callfunc("F_ChangeType",$@MovePiece);
 			if((callfunc("F_Player",$@MovePiece)==1) && ($@yPiece[.@piece]==7)) callfunc("F_ChangeType",$@MovePiece);
 			}
 
-		if($@TakePiece){
-			if(callfunc("F_PieceType",$@MovePiece)==1){
+		if($@TakePiece) {
+			if(.@type==1) {
 				// FIXME: callfunc("F_Player",$@MovePiece) can be omitible
 				if(callfunc("F_Player",$@MovePiece)==1) set .@posible, callfunc("F_Possibles",$@xPiece[.@piece],$@yPiece[.@piece],1,callfunc("F_Player",$@MovePiece));
 				else set .@posible, callfunc("F_Possibles",$@xPiece[.@piece],$@yPiece[.@piece],-1,callfunc("F_Player",$@MovePiece));
 				
-				if(.@posible&10){ 
-					if(callfunc("F_Player",$@MovePiece)==1){
-                  callfunc "F_MoveChecker",$@MovePiece,1,1;
-                  for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ){
-                     set $@canMove[.@i], 0;
-                     }
-                  }
-					else {
-                  callfunc "F_MoveChecker",.@piece,-1,1;
-                  for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ){
-                     set $@canMove[.@i], 0;
-                     }
-                  }
-               set $@canMove[.@piece], 1;
+				if(.@posible&10) { 
+					if(callfunc("F_Player",$@MovePiece)==1) {
+						// FIXME: emote for kings too
+						if(.@type==1) donpcevent "Poring#" + .@piece + "::OnEmote";
+						callfunc "F_MoveChecker",$@MovePiece, 1, 1;
+						for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ) {
+							set $@canMove[.@i], 0;
+						}
+					} else {
+						callfunc "F_MoveChecker",.@piece, -1, 1;
+						for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ) {
+							set $@canMove[.@i], 0;
+						}
+					}
+					set $@canMove[.@piece], 1;
 				} else { 
 					set $@TakePiece, 0;
-					}
+				}
 			} else {
 				set .@posible, callfunc("F_Possibles2",$@xPiece[.@piece],$@yPiece[.@piece],callfunc("F_Player",$@MovePiece));
 
-				if(.@posible&170){ 
+				if(.@posible&170) { 
 					callfunc "F_MoveChecker2",.@piece,1;
-					if(callfunc("F_Player",$@MovePiece)==1){
-                  for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ){
-                     set $@canMove[.@i], 0;
-                     }
-               } else {
-                  for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ){
-                     set $@canMove[.@i], 0;
-                     }
-                  }
-               set $@canMove[.@piece], 1;
+					if(callfunc("F_Player",$@MovePiece)==1) {
+						for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ) {
+							set $@canMove[.@i], 0;
+						}
+					} else {
+						for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ) {
+							set $@canMove[.@i], 0;
+						}
+					}
+					set $@canMove[.@piece], 1;
 				} else { 
 					set $@TakePiece, 0;
-					}
 				}
 			}
+		}
 
 		if(!($@TakePiece)) {
 			set $@MovePiece, 0;
 			set $@CheckTurn, 3 - $@CheckTurn;
 
 			//TODO: end of game
-			if(callfunc("F_EndOfGame")==1) dispbottom "End of Game.";
+			if(callfunc("F_EndOfGame")==1)
+				dispbottom "End of Game.";
 			
 			//TODO: comprobacion antes del inicio del turno
 			callfunc "F_ObligatoryMoves";
 
-			}
-		close;
 		}
+		close;
+	}
 	else close;
 
 	return;
-	}
+}
 
 ///**
 // Retrieve a bitwise variable with the possibles of a specific piece given
@@ -357,31 +370,35 @@ function	script	F_Possibles	{
 
 ///**
 //* Function to move a normal piece
-//* args - piece id, direction (+1:north,-1:south), display menu (0:si, 1:no)
+//* args - piece id, display menu (yes:0, no:1)
 //*/
 function	script	F_MoveChecker	{
-	set .@x,$@xPiece[getarg(0)];
-	set .@y,$@yPiece[getarg(0)];
-	set .@posible, callfunc("F_Possibles",.@x,.@y,getarg(1),callfunc("F_Player",getarg(0)));
+	set .@piece, getarg(0);
+	set .@player, callfunc("F_Player", .@piece);
+	set .@x, $@xPiece[.@piece];
+	set .@y, $@yPiece[.@piece];
+	set .@facing, callfunc("F_PieceFacing", .@piece);
+	
+	set .@posible, callfunc("F_Possibles", .@x, .@y, .@facing, .@player);
 
 	if(($@MovePiece && !(getarg(2))) || !(.@posible)) return;
-	if(!(getarg(2)) && !($@canMove[getarg(0)])) return;
+	if(!(getarg(2)) && !($@canMove[.@piece])) return;
 
-	if(!getarg(2)) set .@choose,select("Mover","No mover");
+	if(!getarg(2)) set .@choose, select("Mover", "No mover");
 	else set .@choose, 1;
 
 	if(.@choose==1){
-		set $@MovePiece,getarg(0);
-		if((.@posible&1) && !(.@posible&10)) callfunc "F_GhostLoader",.@x-1,.@y+getarg(1);
-		if((.@posible&4) && !(.@posible&10)) callfunc "F_GhostLoader",.@x+1,.@y+getarg(1);
-		if(.@posible&2) { callfunc "F_GhostLoader",.@x-2,.@y+(2*getarg(1)); set $@TakePiece,1; }
-		if(.@posible&8) { callfunc "F_GhostLoader",.@x+2,.@y+(2*getarg(1)); set $@TakePiece,1; }
+		set $@MovePiece, .@piece;
+		if((.@posible&1) && !(.@posible&10)) callfunc "F_GhostLoader", .@x-1, .@y+.@facing;
+		if((.@posible&4) && !(.@posible&10)) callfunc "F_GhostLoader", .@x+1, .@y+.@facing;
+		if(.@posible&2) { callfunc "F_GhostLoader", .@x-2, .@y+(2*.@facing); set $@TakePiece, 1; }
+		if(.@posible&8) { callfunc "F_GhostLoader", .@x+2, .@y+(2*.@facing); set $@TakePiece, 1; }
 		if(!getarg(2)) close;
 		}
 	else close;
 		
 	return;
-	}
+}
 
 ///**
 //* Retrieve a bitwise variable with the possibles of a specific piece checker given
@@ -426,7 +443,7 @@ function	script	F_Possibles2	{
 
 ///**
 //* Function to move a checker piece
-//* args - piece id, display menu (0:si, 1:no)
+//* args - piece id, display menu (yes:0, no:1)
 //*/
 function	script	F_MoveChecker2	{
 	set .@x, $@xPiece[getarg(0)];
@@ -475,11 +492,12 @@ function	script	F_MoveChecker2	{
 //* return - yes or no.
 //*/
 function	script	F_CheckTurn	{
-	if((getarg(0)==$@WPlayer) && (getarg(1)==1)){
-		if($@CheckTurn==1) return 1;
+	set .@player, callfunc("F_Player", getarg(1));
+	if((getarg(0) == $@WPlayer) && (.@player == 1)){
+		if($@CheckTurn == 1) return 1;
 		else dispbottom "Es el turno de las negras";
-	} else if((getarg(0)==$@BPlayer) && (getarg(1)==2)){
-		if($@CheckTurn==2) return 1;
+	} else if((getarg(0)==$@BPlayer) && (.@player == 2)){
+		if($@CheckTurn == 2) return 1;
 		else dispbottom "Es el turno de las blancas";
 	} else {
 		dispbottom "No tienes permiso para mover esta ficha.";
@@ -488,7 +506,6 @@ function	script	F_CheckTurn	{
 }
 
 function	script	F_ch_ResetGame	{
-
 	set $@WPlayer, 0;
 	set $@BPlayer, 0;
 	set $@Opponent$, "";
@@ -502,4 +519,58 @@ function	script	F_ch_ResetGame	{
 	for(set .@i,1; .@i < 15; set .@i, .@i + 1)
 		disablenpc "Poporing#" + .@i;
 	return;
+}
+
+///**
+//* Starts a new game.
+//*/
+function	script	F_StartGame	{
+		setarray $@xPiece[1],0,2,4,6,1,3,5,7,0,2,4,6,7,5,3,1,6,4,2,0,7,5,3,1;
+		setarray $@yPiece[1],0,0,0,0,1,1,1,1,2,2,2,2,7,7,7,7,6,6,6,6,5,5,5,5;
+
+		for(set .@i, 0; .@i < 64; set .@i, .@i + 1)
+			set $@cboard[.@i], 0;
+
+		for(set .@i, 1; .@i < 25; set .@i, .@i + 1) {
+			movenpc "Poring#" + .@i, callfunc("F_AbsolutePos", $@xPiece[.@i]), callfunc("F_AbsolutePos", $@yPiece[.@i]);
+			enablenpc "Poring#" + .@i;
+		}
+
+		for(set .@i, 1; .@i < 15; set .@i, .@i + 1)
+			disablenpc "Poporing#" + .@i;
+
+		for(set .@i, 1; .@i < 25; set .@i, .@i + 1)
+			disablenpc "Angeling#" + .@i;
+
+		for(set .@i, 1; .@i < 25; set .@i, .@i + 1)
+			set $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])], .@i;
+
+		for(set .@i, 1; .@i <= 12; set .@i, .@i + 1)
+			set $@canMove[.@i], 1;
+
+		for(set .@i, 13; .@i <= 24; set .@i, .@i + 1)
+			set $@canMove[.@i], 0;
+
+		setarray $@rPieces[1],12,12;
+		set $@CheckTurn, 1;
+		set $@nGhost, 0;
+		set $@MovePiece, 0;
+		set $@TakePiece, 0;	
+		return;
+}
+
+///**
+//* Return the facing of a man.
+//* args - man
+//* return - north:+1 or south:-1.
+//*/
+function	script	F_PieceFacing	{
+	set .@piece, getarg(0);
+	set .@type, callfunc("F_PieceType", .@piece);
+	if(.@type == 1) {
+		set .@player, callfunc("F_Player", .@piece);
+		if(.@player == 1) return 1;
+		else if(.@player == 2) return -1;
+	}
+	return 0;
 }

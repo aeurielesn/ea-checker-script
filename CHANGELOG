@@ -4,6 +4,7 @@
 [2-10-2010]
 - Actualizado para funcionar con la revision 14410 de eAthena.
 - Reposicionamiento de las fichas en F_StartGame.
+- Añadido scripts_checker.conf
 
 [21-8-2008]
 - Agregada verificación de obligación de comer. En caso de que

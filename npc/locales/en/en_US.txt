@@ -1,0 +1,22 @@
+//===== eAthena Script =========================================================
+//= Checker Localization for United States of America.
+//===== By: ====================================================================
+//= Xyphen
+//===== Current Version: =======================================================
+//= 1.0.0
+//===== Compatible With: =======================================================
+//= eAthena SVN 14410+
+//===== Description: ===========================================================
+//= English localization for United States of America.
+//===== Additional Comments: ===================================================
+//= None.
+//============================================================================== 
+
+-	script	CheckerLocalizationENUS	-1,{
+	end;
+OnInit:
+	set .LANGUAGE$, "English";
+	set .COUNTRY$, "USA";
+	callfunc "F_AddLanguage", strnpcinfo(0);
+	end;
+}

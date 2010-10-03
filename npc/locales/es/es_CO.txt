@@ -1,0 +1,22 @@
+//===== eAthena Script =========================================================
+//= Checker Localization for Colombia.
+//===== By: ====================================================================
+//= Xyphen
+//===== Current Version: =======================================================
+//= 1.0.0
+//===== Compatible With: =======================================================
+//= eAthena SVN 14410+
+//===== Description: ===========================================================
+//= Spanish localization for Colombia.
+//===== Additional Comments: ===================================================
+//= None.
+//============================================================================== 
+
+-	script	CheckerLocalizationESCO	-1,{
+	end;
+OnInit:
+	set .LANGUAGE$, "Español";
+	set .COUNTRY$, "Colombia";
+	callfunc "F_AddLanguage", strnpcinfo(0);
+	end;
+}

@@ -7,8 +7,25 @@
 //* canMove[0..24]
 //*/
 
+//checker,7,26,4	script	LANGUAGES	858,{
+//	set .@size, getarraysize($@checker_languages$);
+//	for( set .@i, 0; .@i < .@size; set .@i, .@i + 1 ) {
+//		set .@display_names$[.@i], callfunc("F_GetLanguage",$@checker_languages$[.@i]) + " [" + callfunc("F_GetCountry",$@checker_languages$[.@i]) + "]";
+//	}
+//	set .@choose,
+//		select(
+//			.@display_names$[0],
+//			.@display_names$[1],
+//			.@display_names$[2],
+//			.@display_names$[3],
+//			.@display_names$[4]
+//		);
+//	close;
+//	end;
+//}
+
 checker,7,10,4	script	DEBUG	858,{
-	set .@choose, select("Play alone", "Switch Turn");
+	set .@choose, select("Play alone", "Switch Turn","getvariableofnpc");
 	switch(.@choose) {
 		case 1:
 			set $@WPlayer, getcharid(0);
@@ -17,6 +34,10 @@ checker,7,10,4	script	DEBUG	858,{
 			break;
 		case 2:
 			set $@CheckTurn, 3 - $@CheckTurn;
+			break;
+		case 3:
+			announce "CheckerLocalizationENUS#us1: " + getvariableofnpc(.debug$, "LocalizationENUS#1"), bc_all;
+			announce "CheckerLocalizationENUS#us2: " + getvariableofnpc(.debug$, "LocalizationENUS#2"), bc_all;
 			break;
 	}
 	close;

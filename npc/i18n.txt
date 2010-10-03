@@ -1,0 +1,40 @@
+//===== eAthena Script =========================================================
+//= Internationalizatio and Localization functions.
+//===== By: ====================================================================
+//= Xyphen
+//===== Current Version: =======================================================
+//= 1.0.0
+//===== Compatible With: =======================================================
+//= eAthena SVN 14410+
+//===== Description: ===========================================================
+//= i18n core functions.
+//===== Additional Comments: ===================================================
+//= None.
+//============================================================================== 
+
+//============================================================================== 
+//= Add a localization npc to the availables languages.
+//= @arg 0 name of the localization npc to be add
+//============================================================================== 
+function	script	F_AddLanguage	{
+	set .@size, getarraysize($@checker_languages$);
+	set $@checker_languages$[.@size], getarg(0);
+}
+
+//============================================================================== 
+//= Retrieve a display name of the language supported by the provided
+//= localization npc.
+//= @arg 0 name of the localization npc
+//============================================================================== 
+function	script	F_GetLanguage	{
+	return getvariableofnpc(.LANGUAGE$, getarg(0));
+}
+
+//============================================================================== 
+//= Retrieve the country of the language supported by the provided
+//= localization npc.
+//= @arg 0 name of the localization npc
+//============================================================================== 
+function	script	F_GetCountry	{
+	return getvariableofnpc(.COUNTRY$, getarg(0));
+}

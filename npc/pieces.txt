@@ -4,7 +4,7 @@
 //= Xyphen
 //= pakpil
 //===== Current Version: =======================================================
-//= 2.0
+//= 2.1
 //===== Compatible With: =======================================================
 //= eAthena SVN 14410+
 //===== Description: ===========================================================
@@ -25,6 +25,18 @@
 
 OnEmote:
 	emotion e_gasp;
+	end;
+
+OnShowEvent:
+	attachrid($@AIPlayer[$@CheckTurn]);
+	showevent 1, 0;
+	detachrid;
+	end;
+	
+OnUnshowEvent:
+	attachrid($@AIPlayer[$@CheckTurn]);
+	showevent 0, 0;
+	detachrid;
 	end;
 }
 

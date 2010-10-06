@@ -4,7 +4,7 @@
 //= Xyphen
 //= pakpil
 //===== Current Version: =====================================
-//= 5.0
+//= 5.1
 //===== Compatible With: =====================================
 //= eAthena SVN 14410+
 //===== Description: =========================================
@@ -43,14 +43,7 @@ function	script	F_ObligatoryMoves	{
 				set $@canMove[.@i], 1 - $@canMove[.@i];
 			}
 		}
-		for( set .@i, 1; .@i <= 12; set .@i, .@i + 1 ) {
-			set .@piece, $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])];
-			set .@type, callfunc("F_PieceType", .@piece);
-			if(.@type && $@canMove[.@i]) {
-				// FIXME: kings
-				if(.@type==1) donpcevent "Poring#" + .@i + "::OnEmote";
-			}
-		}
+		
 	} else if($@CheckTurn==2) {
 		for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ) {
 			set .@posible, 0;
@@ -75,15 +68,8 @@ function	script	F_ObligatoryMoves	{
 				set $@canMove[.@i], 1 - $@canMove[.@i];
 			}
 		}
-		for( set .@i, 13; .@i <= 24; set .@i, .@i + 1 ) {
-			set .@piece, $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])];
-			set .@type, callfunc("F_PieceType", .@piece);
-			if(.@type && $@canMove[.@i]) {
-				// FIXME: kings
-				if(.@type==1) donpcevent "Poring#" + .@i + "::OnEmote";
-			}
-		}		
 	}
+	callfunc "F_ShowPossibleMoves", $@CheckTurn;
 	return .@obligatory;
 }
 
@@ -389,6 +375,7 @@ function	script	F_MoveChecker	{
 
 	if(.@choose==1){
 		set $@MovePiece, .@piece;
+		callfunc "F_UnshowPossibleMoves", .@player;
 		if((.@posible&1) && !(.@posible&10)) callfunc "F_GhostLoader", .@x-1, .@y+.@facing;
 		if((.@posible&4) && !(.@posible&10)) callfunc "F_GhostLoader", .@x+1, .@y+.@facing;
 		if(.@posible&2) { callfunc "F_GhostLoader", .@x-2, .@y+(2*.@facing); set $@TakePiece, 1; }
@@ -573,4 +560,42 @@ function	script	F_PieceFacing	{
 		else if(.@player == 2) return -1;
 	}
 	return 0;
+}
+
+//============================================================ 
+//= Show possible moves using showevent command
+//= @arg 0 player
+//============================================================ 
+function	script	F_ShowPossibleMoves	{
+	set .@player, getarg(0);
+	set .@lowerBound, 12 * .@player - 11;
+	set .@upperBound, .@lowerBound + 12;
+	for(set .@i, .@lowerBound; .@i < .@upperBound; set .@i, .@i + 1 ) {
+		set .@piece, $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])];
+		set .@type, callfunc("F_PieceType", .@piece);
+		if(.@type && $@canMove[.@i]) {
+			// FIXME: kings
+			if(.@type==1) donpcevent "Poring#" + .@i + "::OnShowEvent";
+		}
+	}
+	return;
+}
+
+//============================================================ 
+//= Clean possible moves
+//= @arg 0 player
+//============================================================ 
+function	script	F_UnshowPossibleMoves	{
+	set .@player, getarg(0);
+	set .@lowerBound, 12 * .@player - 11;
+	set .@upperBound, .@lowerBound + 12;
+	for(set .@i, .@lowerBound; .@i < .@upperBound; set .@i, .@i + 1 ) {
+		set .@piece, $@cboard[callfunc("F_BoardPos", $@xPiece[.@i], $@yPiece[.@i])];
+		set .@type, callfunc("F_PieceType", .@piece);
+		if(.@type && $@canMove[.@i]) {
+			// FIXME: kings
+			if(.@type==1) donpcevent "Poring#" + .@i + "::OnUnshowEvent";
+		}
+	}
+	return;
 }

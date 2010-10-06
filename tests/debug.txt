@@ -7,29 +7,31 @@
 //* canMove[0..24]
 //*/
 
-//checker,7,26,4	script	LANGUAGES	858,{
-//	set .@size, getarraysize($@checker_languages$);
-//	for( set .@i, 0; .@i < .@size; set .@i, .@i + 1 ) {
-//		set .@display_names$[.@i], callfunc("F_GetLanguage",$@checker_languages$[.@i]) + " [" + callfunc("F_GetCountry",$@checker_languages$[.@i]) + "]";
-//	}
-//	set .@choose,
-//		select(
-//			.@display_names$[0],
-//			.@display_names$[1],
-//			.@display_names$[2],
-//			.@display_names$[3],
-//			.@display_names$[4]
-//		);
-//	close;
-//	end;
-//}
+checker,7,26,4	script	LANGUAGES	858,{
+	set .@size, getarraysize($@checker_languages$);
+	for( set .@i, 0; .@i < .@size; set .@i, .@i + 1 ) {
+		set .@display_names$[.@i], callfunc("F_GetLanguage",$@checker_languages$[.@i]) + " [" + callfunc("F_GetCountry",$@checker_languages$[.@i]) + "]";
+	}
+	set .@choose,
+		select(
+			.@display_names$[0],
+			.@display_names$[1],
+			.@display_names$[2],
+			.@display_names$[3],
+			.@display_names$[4]
+			// Add as much as maximum number of languages availables.
+		);
+	close;
+	end;
+}
 
 checker,7,10,4	script	DEBUG	858,{
-	set .@choose, select("Play alone", "Switch Turn","getvariableofnpc");
+	set .@choose, select("Play alone", "Switch Turn","getvariableofnpc","showevent","doevent + showevent");
 	switch(.@choose) {
 		case 1:
 			set $@WPlayer, getcharid(0);
 			set $@BPlayer, getcharid(0);
+			setarray $@AIPlayer[1], getcharid(3), getcharid(3);
 			callfunc "F_StartGame";
 			break;
 		case 2:
@@ -39,8 +41,18 @@ checker,7,10,4	script	DEBUG	858,{
 			announce "CheckerLocalizationENUS#us1: " + getvariableofnpc(.debug$, "LocalizationENUS#1"), bc_all;
 			announce "CheckerLocalizationENUS#us2: " + getvariableofnpc(.debug$, "LocalizationENUS#2"), bc_all;
 			break;
+		case 4:
+			showevent 1, 0;
+			break;
+		case 5:
+			doevent "DEBUG::OnShowEvent";
+			break;
 	}
 	close;
+	end;
+
+OnShowEvent:
+	showevent 1, 0;
 	end;
 }
 

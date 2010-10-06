@@ -1,6 +1,10 @@
 ﻿//============================================================
 //= Changelog
 //============================================================
+[7-10-2010]
+- Reemplazado emote por showevent para mostrar los posibles
+  movimientos de las fichas en el turno correspondiente.
+
 [2-10-2010]
 - Actualizado para funcionar con la revision 14410 de eAthena.
 - Reposicionamiento de las fichas en F_StartGame.

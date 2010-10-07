@@ -20,7 +20,7 @@ checker,5,3,4	script	Checker Manager#ck_game	47,{
 	if(getgmlevel() >= 80 ) goto L_GMMenu;
 
 L_Start:	
-	if($@CMO) goto L_Occuped;  	// Si el npc está ocupado con un char, nos dice que esperemos.
+	if($@CMO) goto L_Occuped;  	// Si el npc estÃ¡ ocupado con un char, nos dice que esperemos.
 	set $@CMO, 1;			//El npc se pone el cartel de "ocupado".
 
 	if($@CheckReg == 1 && strcharinfo(0) == $@Opponent$) goto L_RegOpponent;	//Comienzo del registro del segundo jugador.
@@ -40,16 +40,16 @@ L_Start:
 	if($@CheckGame) {
 		mes "^7E0000[Checker Manager]^000000";
 		mes "En estos momentos hay una";
-		mes "partida en curso, intentaló";
-		mes "más tarde.";
+		mes "partida en curso, intentalÃ³";
+		mes "mÃ¡s tarde.";
 		set $@CMO, 0;
 		stopnpctimer "Checker Manager#ck_game";
 		close;
 	}
 	mes "^7E0000[Checker Manager]^000000";
-	mes "¿Deseas comenzar una partida?";
+	mes "Â¿Deseas comenzar una partida?";
 	next;
-	switch(prompt("- Sí, ¡jugemos un rato!.:- No, mejor en otro momento.:- ¿Como jugar?")){
+	switch(prompt("- SÃ­, Â¡jugemos un rato!.:- No, mejor en otro momento.:- Â¿Como jugar?")){
 		case 1:
 			set $@CheckGame, 1;
 			goto L_StartRegister;
@@ -89,9 +89,9 @@ L_InOpponent:
 	input @opponet$;
 	mes "^7E0000[Checker Manager]^000000";
 	mes "El nombre de tu oponente es: ^000077"+@opponet$+"^000000";
-	mes "¿Es correcto?";
+	mes "Â¿Es correcto?";
 	next;
-	switch(prompt("- Sí, es correcto.","-No, me equivoqué.")){
+	switch(prompt("- SÃ­, es correcto.","-No, me equivoquÃ©.")){
 		case 1:
 			set $@CheckReg, 1;
 			set $@Opponent$, @opponet$;
@@ -110,7 +110,7 @@ L_InOpponent:
 	set $@BPlayer, 0;
 	mes "^7E0000[Checker Manager]^000000";
 	mes "Correcto, continuemos entonces.";
-	mes "¿Con que color de fichas deseas jugar?";
+	mes "Â¿Con que color de fichas deseas jugar?";
 	next;
 	switch(prompt("- Blancas ^007700[Porings]^000000","- Negras ^007700[Marins]^000000")){
 		case 1:
@@ -126,7 +126,7 @@ L_InOpponent:
 	}
 	mes "^7E0000[Checker Manager]^000000";
 	mes "Estupendo, ya puedes decir a tu oponente que se registre.";
-	mes "Una vez se haya registrado podrá comenzar la partida.";
+	mes "Una vez se haya registrado podrÃ¡ comenzar la partida.";
 	set $@CMO, 0;
 	stopnpctimer "Checker Manager#ck_game";
 	donpcevent "#ck_game_reg_timer::OnStart";
@@ -137,11 +137,11 @@ L_RegOpponent:
 	if(strcharinfo(0) == $@Opponent$) {
 		mes "^7E0000[Checker Manager]^000000";
 		if($@WPlayer) {
-			mes "Hola ^007700"+strcharinfo(0)+"^000000, tu oponente ha escogido las fichas blancas, tú juegas con las negras.";
+			mes "Hola ^007700"+strcharinfo(0)+"^000000, tu oponente ha escogido las fichas blancas, tÃº juegas con las negras.";
 			set $@BPlayer, getcharid(0);
 		}
 		else if($@BPlayer) {
-			mes "Hola ^007700"+strcharinfo(0)+"^000000, tu oponente ha escogido las fichas negras, tú juegas con las blancas.";
+			mes "Hola ^007700"+strcharinfo(0)+"^000000, tu oponente ha escogido las fichas negras, tÃº juegas con las blancas.";
 			set $@WPlayer, getcharid(0);
 		}
 		mes "Podeis comenzar la partida.";
@@ -164,17 +164,17 @@ L_RegOpponent:
 L_Occuped:
 
 	mes "^7E0000[Checker Manager]^000000";
-	mes "Lo siento pero en este momento estoy ocupado, vuelve más tarde.";
+	mes "Lo siento pero en este momento estoy ocupado, vuelve mÃ¡s tarde.";
 	close;
 
 L_Playing:
 	mes "^7E0000[Checker Manager]^000000";
-	mes "En este momento hay una partida en juego, vuelve más tarde.";
+	mes "En este momento hay una partida en juego, vuelve mÃ¡s tarde.";
 	close;
 
-OnTimer120000:		// 2 minutos margen de seguridad para que se desbloqué el npc en caso de no terminar el registro.
+OnTimer120000:		// 2 minutos margen de seguridad para que se desbloquÃ© el npc en caso de no terminar el registro.
 	
-		announce "Pasó el tiempo máximo para registrarse, el tablero quedá libre.",8;
+		announce "PasÃ³ el tiempo mÃ¡ximo para registrarse, el tablero quedÃ¡ libre.",8;
 		stopnpctimer;
 		setnpctimer 0;
 		set $@CMO, 0;
@@ -187,7 +187,7 @@ L_GMMenu:
 
 
 	mes "^7E0000[Checker Manager]^000000";
-	mes "¿Que deseas jugar o resetear el evento?";
+	mes "Â¿Que deseas jugar o resetear el evento?";
 	next;
 	switch(select("- Quiero jugar una partida.","- Quiero resetear el evento.","- Cancelar")){
 		case 1:
@@ -198,10 +198,10 @@ L_GMMenu:
 		case 2:
 
 			mes "^7E0000[Checker Manager]^000000";
-			mes "¿Seguro que quieres resetear el script?";
+			mes "Â¿Seguro que quieres resetear el script?";
 			if ($@CheckGame) mes "Te aviso de que hay una partida en juego en estos momentos.";
 			next;
-			switch(select("Sí, resetea el evento.","No, mejor dejalo como está.")){
+			switch(select("SÃ­, resetea el evento.","No, mejor dejalo como estÃ¡.")){
 				case 1:
 			
 					mes "^7E0000[Checker Manager]^000000";
@@ -210,7 +210,7 @@ L_GMMenu:
 					callfunc "F_ch_ResetGame";
 				
 					mes "^7E0000[Checker Manager]^000000";
-					mes "Ok, ya está todo reseteado, listo para ser utilizado de nuevo.";
+					mes "Ok, ya estÃ¡ todo reseteado, listo para ser utilizado de nuevo.";
 					close;
 				case 2:
 					mes "^7E0000[Checker Manager]^000000";
@@ -271,7 +271,7 @@ OnTimer120000:
 
 	if($@CheckReg < 2) {
 		
-		announce "Pasó el tiempo máximo para el registro del segundo jugador, el tablero queda libre.",8;
+		announce "PasÃ³ el tiempo mÃ¡ximo para el registro del segundo jugador, el tablero queda libre.",8;
 		stopnpctimer;
 		setnpctimer 0;
 		stopnpctimer "#ck_game_reg_timer";
@@ -300,7 +300,7 @@ OnTimer1000:
 	end;
 
 OnTimer5000:
-	mapannounce "checker","El ganador ha sido: [Ganador] ~¡¡Enhorabuena!!~",bc_map;
+	mapannounce "checker","El ganador ha sido: [Ganador] ~Â¡Â¡Enhorabuena!!~",bc_map;
 	callfunc "F_ch_ResetGame";
 	end;
 

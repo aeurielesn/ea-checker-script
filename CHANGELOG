@@ -1,32 +1,37 @@
-//============================================================
+Ôªø//============================================================
 //= Changelog
 //============================================================
+[7-10-2010]
+- Reemplazado emote por showevent para mostrar los posibles
+  movimientos de las fichas en el turno correspondiente.
+
 [4-10-2010]
 - Propuesta para i18n.
+
 
 [2-10-2010]
 - Actualizado para funcionar con la revision 14410 de eAthena.
 - Reposicionamiento de las fichas en F_StartGame.
-- AÒadido scripts_checker.conf
+- A√±adido scripts_checker.conf
 
 [21-8-2008]
-- Agregada verificaciÛn de obligaciÛn de comer. En caso de que
-  haya alguna/s pieza que tenga que comer, solo podr·n moverse
+- Agregada verificaci√≥n de obligaci√≥n de comer. En caso de que
+  haya alguna/s pieza que tenga que comer, solo podr√°n moverse
   esa/s.
 - Agregado control de reseteo y corregido el control de tiempos
   de espera en el Checker Manager.
 
 [13-08-2008]
 - Agregados los archivos del mapa del tablero.
-- Corregido el bug de selecciÛn de movimiento en las damas.
+- Corregido el bug de selecci√≥n de movimiento en las damas.
 
 [24-06-2008]
-- Agregada funciÛn para comprobar fin del juego.
+- Agregada funci√≥n para comprobar fin del juego.
 	- El oponente no puede mover ninguna ficha.
 	- El jugador come todas las piezas del oponente.
-- Agregada comprobaciÛn de coronaciÛn de peones.
+- Agregada comprobaci√≥n de coronaci√≥n de peones.
 - Correcciones de bugs varios detectados durante 
-  la inspecciÛn del cÛdigo.
+  la inspecci√≥n del c√≥digo.
 
 [06-10-2007]
 - Corregido bug de movimiento de fichas con la opcion "No Mover"

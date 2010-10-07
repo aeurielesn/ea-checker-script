@@ -1,18 +1,15 @@
 ﻿//============================================================
 //= Changelog
 //============================================================
-[7-10-2010]
-- Reemplazado emote por showevent para mostrar los posibles
-  movimientos de las fichas en el turno correspondiente.
 
 [4-10-2010]
 - Propuesta para i18n.
-
 
 [2-10-2010]
 - Actualizado para funcionar con la revision 14410 de eAthena.
 - Reposicionamiento de las fichas en F_StartGame.
 - Añadido scripts_checker.conf
+- Agregado OnEmote.
 
 [21-8-2008]
 - Agregada verificación de obligación de comer. En caso de que
